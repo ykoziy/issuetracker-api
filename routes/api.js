@@ -19,8 +19,10 @@ module.exports = function (app) {
   app.route('/api/issues/:project')
 
     .get(function (req, res){
-      var project = req.params.project;
-
+      Issue.find(req.query, (err, data) => {
+        if (err) return res.status(500).send('error');
+        res.send(data);
+      });
     })
 
     .post(function (req, res){
