@@ -109,11 +109,28 @@ suite('Functional Tests', function() {
       });
 
       test('One filter', function(done) {
-
+        chai.request(server)
+        .get('/api/issues/test')
+        .query({created_by: 'Alice'})
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isArray(res.body);
+          assert.equal(res.body[0].created_by, 'Alice');
+          done();
+        });
       });
 
       test('Multiple filters (test for multiple fields you know will be in the db for a return)', function(done) {
-
+        chai.request(server)
+        .get('/api/issues/test')
+        .query({created_by: 'Alice', issue_title: 'Functional Test - Required fields filled in'})
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.isArray(res.body);
+          assert.equal(res.body[0].created_by, 'Alice');
+          assert.equal(res.body[0].issue_title, 'Functional Test - Required fields filled in');
+          done();
+        });
       });
 
     });
