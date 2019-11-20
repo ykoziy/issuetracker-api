@@ -19,7 +19,7 @@ suite('Functional Tests', function() {
 
       test('Every field filled in', function(done) {
        chai.request(server)
-        .post('/api/issues/test')
+        .post('/api/issues/apitest')
         .send({
           issue_title: 'Title',
           issue_text: 'text',
@@ -29,23 +29,47 @@ suite('Functional Tests', function() {
         })
         .end(function(err, res){
           assert.equal(res.status, 200);
-
-          //fill me in too!
-
+          assert.equal(res.body.issue_title, "Title");
+          assert.equal(res.body.issue_text, "text");
+          assert.equal(res.body.created_by, "Functional Test - Every field filled in");
+          assert.equal(res.body.assigned_to, "Chai and Mocha");
+          assert.equal(res.body.status_text, "In QA");
           done();
         });
       });
 
       test('Required fields filled in', function(done) {
-
+        chai.request(server)
+         .post('/api/issues/apitest')
+         .send({
+           issue_title: 'Functional Test - Required fields filled in',
+           issue_text: 'text',
+           created_by: 'Alice'
+         })
+         .end(function(err, res){
+           assert.equal(res.status, 200);
+           assert.equal(res.body.issue_title, "Functional Test - Required fields filled in");
+           assert.equal(res.body.issue_text, "text");
+           assert.equal(res.body.created_by, "Alice");
+           done();
+         });
       });
 
       test('Missing required fields', function(done) {
-
+        chai.request(server)
+         .post('/api/issues/apitest')
+         .send({
+           issue_title: 'Functional Test - Missing required fields'
+         })
+         .end(function(err, res){
+           assert.equal(res.status, 422);
+           assert.equal(res.body.error, "Missing fields: issue_text,created_by");
+           done();
+         });
       });
 
     });
-
+/*
     suite('PUT /api/issues/{project} => text', function() {
 
       test('No body', function(done) {
@@ -61,7 +85,7 @@ suite('Functional Tests', function() {
       });
 
     });
-
+*/
     suite('GET /api/issues/{project} => Array of objects with issue data', function() {
 
       test('No filter', function(done) {
