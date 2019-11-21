@@ -47,8 +47,17 @@ module.exports = function (app) {
     })
 
     .put(function (req, res){
-      var project = req.params.project;
-
+      let issueID = req.body._id;
+      let request = req.body;
+      delete request._id;
+      if (Object.keys(request).length == 0) {
+        return res.send('no updated field sent');
+      }
+      Issue.findOneAndUpdate(issueID, request, (err, issue) => {
+        if (err) return console.error(err);
+        if (!issue) return res.send(`could not update ${issueID}`);
+        res.send('successfully updated');
+      });
     })
 
     .delete(function (req, res){
