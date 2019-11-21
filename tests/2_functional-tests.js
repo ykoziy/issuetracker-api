@@ -16,6 +16,7 @@ chai.use(chaiHttp);
 suite('Functional Tests', function() {
 
     let id1;
+    let id2;
 
     suite('POST /api/issues/{project} => object with issue data', function() {
 
@@ -51,6 +52,7 @@ suite('Functional Tests', function() {
          })
          .end(function(err, res){
            assert.equal(res.status, 200);
+           id2 = res.body._id;
            assert.equal(res.body.issue_title, "Functional Test - Required fields filled in");
            assert.equal(res.body.issue_text, "text");
            assert.equal(res.body.created_by, "Alice");
@@ -98,7 +100,14 @@ suite('Functional Tests', function() {
       });
 
       test('Multiple fields to update', function(done) {
-
+        chai.request(server)
+         .put('/api/issues/apitest')
+         .send({_id: id2, issue_title: 'Updated title (multiple fields test)', issue_text: 'Updated text (multiple fields test)'})
+         .end(function(err, res){
+           assert.equal(res.status, 200)
+           assert.equal(res.text, 'successfully updated')
+           done();
+         });
       });
 
     });
