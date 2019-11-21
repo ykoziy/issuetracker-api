@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const options = {useNewUrlParser: true, useUnifiedTopology: true};
+const options = {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false};
 
 mongoose.connect(process.env.DB, options).
   catch(err => {
