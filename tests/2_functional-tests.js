@@ -15,6 +15,8 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
 
+    let id1;
+
     suite('POST /api/issues/{project} => object with issue data', function() {
 
       test('Every field filled in', function(done) {
@@ -29,6 +31,7 @@ suite('Functional Tests', function() {
         })
         .end(function(err, res){
           assert.equal(res.status, 200);
+          id1 = res.body._id;
           assert.equal(res.body.issue_title, "Title");
           assert.equal(res.body.issue_text, "text");
           assert.equal(res.body.created_by, "Functional Test - Every field filled in");
@@ -69,15 +72,29 @@ suite('Functional Tests', function() {
       });
 
     });
-/*
+
     suite('PUT /api/issues/{project} => text', function() {
 
       test('No body', function(done) {
-
+        chai.request(server)
+         .put('/api/issues/apitest')
+         .send({_id: id1})
+         .end(function(err, res){
+           assert.equal(res.status, 200)
+           assert.equal(res.text, 'no updated field sent')
+           done();
+         });
       });
 
       test('One field to update', function(done) {
-
+        chai.request(server)
+         .put('/api/issues/apitest')
+         .send({_id: id1, issue_title: 'Updated issue title test'})
+         .end(function(err, res){
+           assert.equal(res.status, 200)
+           assert.equal(res.text, 'successfully updated')
+           done();
+         });
       });
 
       test('Multiple fields to update', function(done) {
@@ -85,7 +102,7 @@ suite('Functional Tests', function() {
       });
 
     });
-*/
+
     suite('GET /api/issues/{project} => Array of objects with issue data', function() {
 
       test('No filter', function(done) {
