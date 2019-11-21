@@ -32,6 +32,16 @@ suite('Functional Tests', function() {
         })
         .end(function(err, res){
           assert.equal(res.status, 200);
+          assert.isObject(res.body);
+          assert.property(res.body, 'issue_title');
+          assert.property(res.body, 'issue_text');
+          assert.property(res.body, 'created_on');
+          assert.property(res.body, 'updated_on');
+          assert.property(res.body, 'created_by');
+          assert.property(res.body, 'assigned_to');
+          assert.property(res.body, 'open');
+          assert.property(res.body, 'status_text');
+          assert.property(res.body, '_id');
           id1 = res.body._id;
           assert.equal(res.body.issue_title, "Title");
           assert.equal(res.body.issue_text, "text");
@@ -52,6 +62,14 @@ suite('Functional Tests', function() {
          })
          .end(function(err, res){
            assert.equal(res.status, 200);
+           assert.isObject(res.body);
+           assert.property(res.body, 'issue_title');
+           assert.property(res.body, 'issue_text');
+           assert.property(res.body, 'created_on');
+           assert.property(res.body, 'updated_on');
+           assert.property(res.body, 'created_by');
+           assert.property(res.body, 'open');
+           assert.property(res.body, '_id');
            id2 = res.body._id;
            assert.equal(res.body.issue_title, "Functional Test - Required fields filled in");
            assert.equal(res.body.issue_text, "text");
@@ -82,8 +100,8 @@ suite('Functional Tests', function() {
          .put('/api/issues/apitest')
          .send({_id: id1})
          .end(function(err, res){
-           assert.equal(res.status, 200)
-           assert.equal(res.text, 'no updated field sent')
+           assert.equal(res.status, 200);
+           assert.equal(res.text, 'no updated field sent');
            done();
          });
       });
@@ -93,8 +111,8 @@ suite('Functional Tests', function() {
          .put('/api/issues/apitest')
          .send({_id: id1, issue_title: 'Updated issue title test'})
          .end(function(err, res){
-           assert.equal(res.status, 200)
-           assert.equal(res.text, 'successfully updated')
+           assert.equal(res.status, 200);
+           assert.equal(res.text, 'successfully updated');
            done();
          });
       });
@@ -104,8 +122,8 @@ suite('Functional Tests', function() {
          .put('/api/issues/apitest')
          .send({_id: id2, issue_title: 'Updated title (multiple fields test)', issue_text: 'Updated text (multiple fields test)'})
          .end(function(err, res){
-           assert.equal(res.status, 200)
-           assert.equal(res.text, 'successfully updated')
+           assert.equal(res.status, 200);
+           assert.equal(res.text, 'successfully updated');
            done();
          });
       });
