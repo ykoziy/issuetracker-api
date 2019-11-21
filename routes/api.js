@@ -20,13 +20,12 @@ module.exports = function (app) {
 
     .get(function (req, res){
       Issue.find(req.query, (err, data) => {
-        if (err) return res.status(500).send('error');
+        if (err) return res.status(500).json({error: `Something went wrong`});
         res.send(data);
       });
     })
 
     .post(function (req, res){
-      // optional can be empty
       let requiredFields = ['issue_title','issue_text','created_by'];
       let areRequiredFieldsMissing = [!req.body.issue_title, !req.body.issue_text, !req.body.created_by];
       let missingFields = requiredFields.filter((item, index) => {
@@ -40,7 +39,7 @@ module.exports = function (app) {
 
       let newIssue = new Issue(req.body);
       newIssue.save((err, data) => {
-        if (err) return console.error(err);
+        if (err) return res.status(500).json({error: `Something went wrong`});
         res.json(data);
       });
 
@@ -48,13 +47,26 @@ module.exports = function (app) {
 
     .put(function (req, res){
       let issueID = req.body._id;
-      let request = req.body;
+      let request = Object.assign({}, req.body);
       delete request._id;
+
+      if (!mongoose.Types.ObjectId.isValid(issueID)) {
+        return res.send(`could not update ${issueID}`);
+      }
+
+      for (var item in request) {
+        if (!request[item]) {
+          delete request[item];
+        }
+      }
+
       if (Object.keys(request).length == 0) {
         return res.send('no updated field sent');
       }
+
+      request.updated_on = Date.now();
       Issue.findOneAndUpdate(issueID, request, (err, issue) => {
-        if (err) return console.error(err);
+        if (err) return res.status(500).json({error: `Something went wrong`});
         if (!issue) return res.send(`could not update ${issueID}`);
         res.send('successfully updated');
       });
@@ -66,7 +78,7 @@ module.exports = function (app) {
         return res.send('_id error');
       }
       Issue.findByIdAndRemove(issueID, (err, issue) => {
-        if (err) return console.error(err);
+        if (err) return res.status(500).json({error: `Something went wrong`});
         if (!issue) return res.send(`could not delete ${issueID}`);
         res.send(`deleted ${issueID}`)
       });
