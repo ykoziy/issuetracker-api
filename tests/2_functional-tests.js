@@ -116,7 +116,7 @@ suite('Functional Tests', function() {
 
       test('No filter', function(done) {
         chai.request(server)
-        .get('/api/issues/test')
+        .get('/api/issues/apitest')
         .query({})
         .end(function(err, res){
           assert.equal(res.status, 200);
@@ -136,7 +136,7 @@ suite('Functional Tests', function() {
 
       test('One filter', function(done) {
         chai.request(server)
-        .get('/api/issues/test')
+        .get('/api/issues/apitest')
         .query({created_by: 'Alice'})
         .end((err, res) => {
           assert.equal(res.status, 200);
@@ -148,7 +148,7 @@ suite('Functional Tests', function() {
 
       test('Multiple filters (test for multiple fields you know will be in the db for a return)', function(done) {
         chai.request(server)
-        .get('/api/issues/test')
+        .get('/api/issues/apitest')
         .query({created_by: 'Alice', issue_title: 'Functional Test - Required fields filled in'})
         .end((err, res) => {
           assert.equal(res.status, 200);
@@ -161,14 +161,30 @@ suite('Functional Tests', function() {
 
     });
 
+    //If no _id is sent return '_id error', success: 'deleted '+_id, failed: 'could not delete '+_id.
     suite('DELETE /api/issues/{project} => text', function() {
 
       test('No _id', function(done) {
-
+        chai.request(server)
+        .delete('/api/issues/apitest')
+        .send({})
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.text, '_id error');
+          done();
+        });
       });
 
       test('Valid _id', function(done) {
-
+        chai.request(server)
+        .delete('/api/issues/apitest')
+        .send({_id: id2})
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.text, `deleted ${id2}`);
+          console.log(res.text);
+          done();
+        });
       });
 
     });
