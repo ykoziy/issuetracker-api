@@ -12,7 +12,7 @@ var expect = require('chai').expect;
 //var ObjectId = require('mongodb').ObjectID;
 
 const Issue = require('../models/Issue');
-const requiredFields = ['Title','Text','Created by'];
+const mongoose = require('mongoose');
 
 module.exports = function (app) {
 
@@ -61,8 +61,15 @@ module.exports = function (app) {
     })
 
     .delete(function (req, res){
-      var project = req.params.project;
-
+      let issueID = req.body._id;
+      if (!mongoose.Types.ObjectId.isValid(issueID)) {
+        return res.send('_id error');
+      }
+      Issue.findByIdAndRemove(issueID, (err, issue) => {
+        if (err) return console.error(err);
+        if (!issue) return res.send(`could not delete ${issueID}`);
+        res.send(`deleted ${issueID}`)
+      });
     });
 
 };
